@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>핏룸 Fit Room - 내 방에 딱 맞는 가구</title>
+  <meta name="description" content="방 크기만 입력하면 내 방에 딱 맞는 가구만 보여주는 가구 쇼핑몰, 핏룸">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- ① 헤더 · 네비게이션 (common.js가 채움) -->
+  <div id="header"></div>
+
+  <main>
+
+    <!-- ② 메인 배너 + 핏 체크 -->
+    <section class="hero">
+      <div class="inner hero-in">
+        <div class="hero-txt">
+          <p class="sec-eyebrow">ROOM-FIT FURNITURE</p>
+          <h1>내 방에 딱 맞는 가구,<br><em>치수</em>로 찾아보세요</h1>
+          <p class="lead">줄자로 잰 숫자만 입력하면 그 자리에 들어가는 가구만 골라 드려요.</p>
+
+          <form id="fitForm" class="fit-form" novalidate>
+            <label class="fit-field">
+              <span>가로</span>
+              <input type="number" id="fitW" min="1" max="999" placeholder="120">
+              <em>cm</em>
+            </label>
+            <label class="fit-field">
+              <span>세로(깊이)</span>
+              <input type="number" id="fitD" min="1" max="999" placeholder="60">
+              <em>cm</em>
+            </label>
+            <label class="fit-field">
+              <span>높이 <small>선택</small></span>
+              <input type="number" id="fitH" min="1" max="999" placeholder="-">
+              <em>cm</em>
+            </label>
+            <label class="fit-field fit-select">
+              <span>가구 종류</span>
+              <select id="fitType">
+                <option value="all">전체</option>
+                <option value="bed">침대·소파</option>
+                <option value="desk">책상·의자</option>
+                <option value="storage">수납·선반</option>
+                <option value="table">테이블</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-oak fit-go">찾기</button>
+          </form>
+
+          <p class="fit-live" id="fitLive">가로·세로를 입력하면 들어가는 가구 수를 바로 알려드려요.</p>
+
+          <div class="presets">
+            <span>자주 찾는 자리</span>
+            <button type="button" data-preset="125,65,,desk">창가 책상 자리</button>
+            <button type="button" data-preset="40,45,120,storage">침대 옆 틈새</button>
+            <button type="button" data-preset="120,220,,bed">침대 놓을 벽</button>
+          </div>
+        </div>
+
+        <!-- 내 방 평면도: 입력한 치수가 바로 그려짐 -->
+        <div class="hero-art">
+          <svg viewBox="0 0 460 410" id="roomPlan" aria-label="입력한 자리를 보여주는 방 평면도">
+            <!-- 바닥 -->
+            <rect x="60" y="40" width="360" height="312" fill="#FFFFFF"/>
+            <!-- 바닥 나무결 -->
+            <g stroke="#F0E7DA" stroke-width="1">
+              <path d="M60 79h360M60 118h360M60 157h360M60 196h360M60 235h360M60 274h360M60 313h360"/>
+            </g>
+            <!-- 침대 -->
+            <rect x="60" y="40" width="132" height="240" fill="#E9D9C4"/>
+            <rect x="72" y="50" width="108" height="40" rx="8" fill="#F7F1E8"/>
+            <text x="126" y="190" text-anchor="middle" class="plan-txt">침대</text>
+            <!-- 벽 -->
+            <path d="M60 40h360v312H178M82 352H60V40" fill="none" stroke="#4F5D47" stroke-width="8" stroke-linejoin="round"/>
+            <!-- 창문 -->
+            <path d="M300 40h96" stroke="#DDE3D6" stroke-width="8"/>
+            <path d="M300 40h96" stroke="#4F5D47" stroke-width="1.5"/>
+            <!-- 문 -->
+            <path d="M82 352v-96a96 96 0 0 1 96 96" fill="none" stroke="#B9AFA3" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <text x="126" y="340" text-anchor="middle" class="plan-txt">문</text>
+            <!-- 방 크기 표시 -->
+            <path d="M60 20h360M60 14v12M420 14v12" stroke="#B07A4A" stroke-width="1.5"/>
+            <text x="240" y="14" text-anchor="middle" class="plan-dim">방 가로 300cm</text>
+            <path d="M36 40v312M30 40h12M30 352h12" stroke="#B07A4A" stroke-width="1.5"/>
+            <text x="22" y="196" text-anchor="middle" class="plan-dim" transform="rotate(-90 22 196)">방 세로 260cm</text>
+            <!-- 가구 놓을 자리 (JS로 크기 변경) -->
+            <rect id="spot" x="276" y="44" width="140" height="72" class="spot"/>
+            <text id="spotLabel" x="346" y="136" text-anchor="middle" class="spot-label">놓을 자리</text>
+          </svg>
+          <p class="hero-art-cap" id="planCap">예시 원룸 300×260cm · 입력한 자리가 점선으로 그려져요</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ③ 핏룸이 해결하는 문제 -->
+    <section class="sec inner">
+      <div class="sec-head">
+        <div>
+          <p class="sec-eyebrow">WHY FIT ROOM</p>
+          <h2 class="sec-title">가구 살 때, 이런 적 있으시죠?</h2>
+        </div>
+        <a href="about.html#problem" class="sec-more">브랜드 소개 보기 →</a>
+      </div>
+      <div class="problems">
+        <article class="problem">
+          <span class="num">01</span>
+          <h3>사이즈 실패</h3>
+          <p class="q">"치수는 봤는데, 놓아보니 문이 안 열려요."</p>
+          <p class="a"><b>핏룸은</b> 공간 치수를 넣으면 들어가는 가구만 보여줘요.</p>
+        </article>
+        <article class="problem">
+          <span class="num">02</span>
+          <h3>반품 부담</h3>
+          <p class="q">"너무 커서 반품하려니 포장부터 막막해요."</p>
+          <p class="a"><b>핏룸은</b> 남는 공간(cm)까지 알려줘서 사기 전에 확신할 수 있어요.</p>
+        </article>
+        <article class="problem">
+          <span class="num">03</span>
+          <h3>잦은 이사</h3>
+          <p class="q">"이사할 때마다 가구가 새 방에 안 맞아요."</p>
+          <p class="a"><b>핏룸은</b> 분해 가능하고 가벼운 가구에 '이사 친화' 배지를 붙여요.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ④ 공간별 추천 -->
+    <section class="sec inner">
+      <div class="sec-head">
+        <div>
+          <p class="sec-eyebrow">BY ROOM TYPE</p>
+          <h2 class="sec-title">우리 집 구조에 맞는 추천 조합</h2>
+        </div>
+        <a href="fitcheck_set.html" class="sec-more">공간별 추천 전체 보기 →</a>
+      </div>
+      <div class="rooms" id="roomCards"></div>
+    </section>
+
+    <!-- ⑤ 카테고리 바로가기 -->
+    <section class="sec inner">
+      <div class="cats" id="catTiles"></div>
+    </section>
+
+    <!-- ⑥ 베스트 상품 -->
+    <section class="sec inner">
+      <div class="sec-head">
+        <div>
+          <p class="sec-eyebrow">BEST</p>
+          <h2 class="sec-title">작은 방에서 가장 많이 고른 가구</h2>
+        </div>
+        <a href="shop.html" class="sec-more">전체 상품 보기 →</a>
+      </div>
+      <div class="card-grid" id="bestList"></div>
+    </section>
+
+    <!-- ⑦ 리뷰 미리보기 -->
+    <section class="sec inner">
+      <div class="sec-head">
+        <div>
+          <p class="sec-eyebrow">REVIEW</p>
+          <h2 class="sec-title">방 크기까지 적힌 진짜 후기</h2>
+        </div>
+        <a href="review.html" class="sec-more">리뷰 더 보기 →</a>
+      </div>
+      <div class="reviews" id="reviewList"></div>
+    </section>
+
+    <!-- ⑧ 방명록 미리보기 -->
+    <section class="sec inner">
+      <div class="guest">
+        <div class="guest-list">
+          <p class="sec-eyebrow">GUESTBOOK</p>
+          <h2 class="sec-title">방명록</h2>
+          <ul id="guestList"></ul>
+        </div>
+        <div class="guest-cta">
+          <p>핏룸에 바라는 점, 내 방 자랑,<br>응원 한마디 모두 좋아요.</p>
+          <p class="guest-count">지금까지 <b id="guestCount">0</b>개의 글이 남겨졌어요</p>
+          <div class="guest-btns">
+            <a href="guestbook_write.html" class="btn btn-oak">방명록 남기기</a>
+            <a href="guestbook.html" class="btn btn-ghost">전체 보기</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ⑨ 푸터 (common.js가 채움) -->
+  <div id="footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
